@@ -1,10 +1,10 @@
 .quiz-form {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* 各項目の間隔 */
+  gap: 15px;
 }
 
-.quiz-form div {
+.quiz-form > div { /* タイトルと説明のdivのみ対象 */
   display: flex;
   flex-direction: column;
 }
@@ -20,18 +20,68 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
+  background-color: #555;
+  color: white;
 }
 
 .quiz-form button {
   padding: 10px 15px;
-  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  align-self: flex-start; /* ボタンを左寄せにする */
 }
 
-.quiz-form button:hover {
+/* --- ここから下が新しい/変更された部分 --- */
+
+.question-block {
+  border: 1px solid #444;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #3a3a3a;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 問題ブロック内の間隔 */
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-btn {
+  background-color: #dc3545;
+}
+
+.remove-btn:hover {
+  background-color: #c82333;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* 選択肢同士の間隔 */
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-actions button[type="button"] {
+  background-color: #6c757d;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #5a6268;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #007bff;
+}
+
+.form-actions button[type="submit"]:hover {
   background-color: #0056b3;
 }
