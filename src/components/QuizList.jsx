@@ -1,18 +1,34 @@
-// src/components/QuizList.jsx
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Linkをインポート
+import { supabase } from '../supabaseClient';
 
 function QuizList() {
-  const quizzes = [
-    { id: 1, title: '応用数学 第1回 小テスト' },
-    { id: 2, title: 'ソフトウェア工学 中間試験' },
-    { id: 3, title: '待ち行列理論 確認問題' },
-  ];
+  const [quizzes, setQuizzes] = useState([]);
+
+  useEffect(() => {
+    async function fetchQuizzes() {
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('id, title, description');
+      
+      if (error) {
+        console.error('Error fetching quizzes:', error);
+      } else {
+        setQuizzes(data);
+      }
+    }
+
+    fetchQuizzes();
+  }, []);
 
   return (
     <main>
       <h2>クイズ一覧</h2>
       <ul>
         {quizzes.map(quiz => (
-          <li key={quiz.id}>{quiz.title}</li>
+          <li key={quiz.id}>
+            <Link to={`/quiz/${quiz.id}`}>{quiz.title}</Link> {/* この行を変更 */}
+          </li>
         ))}
       </ul>
     </main>

@@ -1,10 +1,9 @@
-// src/App.jsx
-
 import { Routes, Route, Link } from 'react-router-dom';
 import Header from './components/Header.jsx';
 import QuizList from './components/QuizList.jsx';
 import CreateQuiz from './components/CreateQuiz.jsx';
 import NoteUploader from './components/NoteUploader.jsx';
+import QuizPage from './components/QuizPage.jsx'; // この行を追加
 import './App.css';
 import './components/Navigation.css';
 
@@ -20,6 +19,7 @@ function App() {
           <Route path="/" element={<QuizList />} />
           <Route path="/create" element={<CreateQuiz />} />
           <Route path="/upload" element={<NoteUploader />} />
+          <Route path="/quiz/:quizId" element={<QuizPage />} /> {/* この行を追加 */}
         </Routes>
       </main>
     </div>
