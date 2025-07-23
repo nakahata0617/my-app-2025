@@ -1,3 +1,5 @@
+// src/components/Header.jsx
+
 import './Header.css';
 
 function Header() {

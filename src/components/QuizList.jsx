@@ -1,5 +1,6 @@
+// src/components/QuizList.jsx
+
 function QuizList() {
-  // 本来はここにデータベースから取得したクイズのリストが入ります
   const quizzes = [
     { id: 1, title: '応用数学 第1回 小テスト' },
     { id: 2, title: 'ソフトウェア工学 中間試験' },

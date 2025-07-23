@@ -1,3 +1,5 @@
+// src/components/NoteUploader.jsx
+
 import React, { useState } from 'react';
 
 function NoteUploader() {
@@ -9,7 +11,6 @@ function NoteUploader() {
     e.preventDefault();
     if (file) {
       alert(`ノートをアップロードします:\nタイトル: ${title}\n授業名: ${lecture}\nファイル: ${file.name}`);
-      // ここで実際にSupabaseなどのバックエンドにファイルを送信する処理を呼び出します
     } else {
       alert('ファイルが選択されていません。');
     }
@@ -19,35 +20,10 @@ function NoteUploader() {
     <div>
       <h2>ノートをアップロード</h2>
       <form onSubmit={handleSubmit} className="quiz-form">
-        <div>
-          <label>タイトル:</label>
-          <input 
-            type="text" 
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required 
-          />
-        </div>
-        <div>
-          <label>授業名:</label>
-          <input 
-            type="text" 
-            value={lecture}
-            onChange={(e) => setLecture(e.target.value)}
-            required 
-          />
-        </div>
-        <div>
-          <label>ファイル:</label>
-          <input 
-            type="file" 
-            onChange={(e) => setFile(e.target.files[0])}
-            required 
-          />
-        </div>
-        <div className="form-actions">
-          <button type="submit">アップロード</button>
-        </div>
+        <div><label>タイトル:</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required /></div>
+        <div><label>授業名:</label><input type="text" value={lecture} onChange={(e) => setLecture(e.target.value)} required /></div>
+        <div><label>ファイル:</label><input type="file" onChange={(e) => setFile(e.target.files[0])} required /></div>
+        <div className="form-actions"><button type="submit">アップロード</button></div>
       </form>
     </div>
   );
