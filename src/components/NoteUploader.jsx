@@ -15,26 +15,19 @@ function NoteUploader() {
     setUploading(true);
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
     const fileNameInStorage = `${Date.now()}_${sanitizedName}`;
-    
-    // 1. ファイルをストレージにアップロード
-    const { error: uploadError } = await supabase.storage
-      .from('notes')
-      .upload(fileNameInStorage, file);
 
+    const { error: uploadError } = await supabase.storage.from('notes').upload(fileNameInStorage, file);
     if (uploadError) {
       alert('ファイルのアップロードに失敗しました: ' + uploadError.message);
       setUploading(false);
       return;
     }
 
-    // 2. ファイル情報をデータベースに保存
-    const { error: dbError } = await supabase
-      .from('notes')
-      .insert({
+    const { error: dbError } = await supabase.from('notes').insert({
         title: title,
         lecture_name: lecture,
         storage_path: fileNameInStorage,
-        original_filename: file.name, // ここで元の日本語ファイル名を保存
+        original_filename: file.name,
         uploader_id: user.id
       });
 
@@ -62,5 +55,4 @@ function NoteUploader() {
     </div>
   );
 }
-
 export default NoteUploader;
