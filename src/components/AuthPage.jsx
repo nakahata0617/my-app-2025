@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
+import './buttons.css'; // 新しいCSSをインポート
 
 function AuthPage() {
   const [email, setEmail] = useState('');
@@ -32,10 +33,12 @@ function AuthPage() {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         <div className="form-actions">
-          <button type="submit">{isLogin ? 'ログイン' : '登録'}</button>
+           {/* className="button" を追加 */}
+          <button type="submit" className="button">{isLogin ? 'ログイン' : '登録'}</button>
         </div>
       </form>
-      <button onClick={() => setIsLogin(!isLogin)}>
+      {/* className="button button-secondary" を追加 */}
+      <button onClick={() => setIsLogin(!isLogin)} className="button button-secondary" style={{ marginTop: '10px' }}>
         {isLogin ? '新規登録はこちら' : 'ログインはこちら'}
       </button>
     </div>
