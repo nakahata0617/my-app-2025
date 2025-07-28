@@ -9,6 +9,7 @@ import QuizPage from './components/QuizPage.jsx';
 import NoteList from './components/NoteList.jsx';
 import AuthPage from './components/AuthPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import RankingPage from './components/RankingPage.jsx';
 import './App.css';
 import './components/Navigation.css';
 
@@ -19,11 +20,9 @@ function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -35,10 +34,11 @@ function App() {
     <div className="app-container">
       <Header />
       <nav className="app-nav">
-        <Link to="/">ホーム</Link> | 
-        <Link to="/create">クイズ作成</Link> | 
-        <Link to="/upload">ノート投稿</Link> | 
-        <Link to="/notes">ノート一覧</Link> | 
+        <Link to="/">ホーム</Link> |
+        <Link to="/create">クイズ作成</Link> |
+        <Link to="/upload">ノート投稿</Link> |
+        <Link to="/notes">ノート一覧</Link> |
+        <Link to="/ranking">ランキング</Link> |
         {session ? (
           <button onClick={handleLogout}>ログアウト</button>
         ) : (
@@ -48,25 +48,12 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<QuizList />} />
-          <Route 
-            path="/create" 
-            element={
-              <ProtectedRoute session={session}>
-                <CreateQuiz />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/upload" 
-            element={
-              <ProtectedRoute session={session}>
-                <NoteUploader />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/create" element={<ProtectedRoute session={session}><CreateQuiz /></ProtectedRoute>} />
+          <Route path="/upload" element={<ProtectedRoute session={session}><NoteUploader /></ProtectedRoute>} />
           <Route path="/quiz/:quizId" element={<QuizPage />} />
           <Route path="/notes" element={<NoteList />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/ranking" element={<RankingPage />} />
         </Routes>
       </main>
     </div>

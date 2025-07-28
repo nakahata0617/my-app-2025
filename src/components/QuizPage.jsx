@@ -29,8 +29,15 @@ function QuizPage() {
     });
   };
 
-  const checkAnswers = () => {
+  const checkAnswers = async () => {
     let correctCount = 0;
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert('結果を保存するにはログインが必要です。');
+      return;
+    }
+
     const resultsArray = problems.map((problem, index) => {
       const correctAnswer = problem.options.options[0]; // 正解は常に最初の選択肢
       const userAnswer = userAnswers[index];
@@ -40,6 +47,20 @@ function QuizPage() {
       }
       return { question: problem.question_text, userAnswer, correctAnswer, isCorrect };
     });
+
+    // データベースに結果を保存
+    const { error } = await supabase
+      .from('quiz_attempts')
+      .insert({
+        user_id: user.id,
+        quiz_id: quizId,
+        score: correctCount
+      });
+
+    if (error) {
+      alert('結果の保存に失敗しました: ' + error.message);
+    }
+
     setResults({ resultsArray, correctCount, total: problems.length });
   };
 
