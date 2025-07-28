@@ -8,15 +8,20 @@ function NoteList() {
 
   useEffect(() => {
     async function fetchNotes() {
-      const { data, error } = await supabase.storage.from('notes').list();
+      // データベースのnotesテーブルから情報を取得
+      const { data, error } = await supabase
+        .from('notes')
+        .select('id, original_filename, storage_path');
+      
       if (error) {
         console.error('Error fetching notes:', error);
       } else {
-        const notesWithUrls = data.map(file => {
+        // 各ファイルにダウンロード用の公開URLを追加
+        const notesWithUrls = data.map(note => {
           const { data: { publicUrl } } = supabase.storage
             .from('notes')
-            .getPublicUrl(file.name);
-          return { ...file, publicUrl };
+            .getPublicUrl(note.storage_path);
+          return { ...note, publicUrl };
         });
         setNotes(notesWithUrls);
       }
@@ -36,7 +41,7 @@ function NoteList() {
         {notes.map(note => (
           <li key={note.id} className="card">
             <a href={note.publicUrl} target="_blank" rel="noopener noreferrer">
-              {note.name}
+              {note.original_filename} {/* 元の日本語ファイル名を表示 */}
             </a>
           </li>
         ))}

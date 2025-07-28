@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
-// ファイル名から日本語などの特殊文字を安全な名前に変換する関数
-function sanitizeFileName(fileName) {
-  return fileName.replace(/[^a-zA-Z0-9.\-_]/g, '');
-}
-
 function NoteUploader() {
   const [title, setTitle] = useState('');
   const [lecture, setLecture] = useState('');
@@ -14,22 +9,37 @@ function NoteUploader() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) {
-      alert('ファイルが選択されていません。');
-      return;
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!file || !user) return;
 
     setUploading(true);
-    // 新しいファイル名生成ロジック
-    const sanitizedName = sanitizeFileName(file.name);
-    const fileName = `${Date.now()}_${sanitizedName}`;
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+    const fileNameInStorage = `${Date.now()}_${sanitizedName}`;
     
+    // 1. ファイルをストレージにアップロード
     const { error: uploadError } = await supabase.storage
       .from('notes')
-      .upload(fileName, file);
+      .upload(fileNameInStorage, file);
 
     if (uploadError) {
       alert('ファイルのアップロードに失敗しました: ' + uploadError.message);
+      setUploading(false);
+      return;
+    }
+
+    // 2. ファイル情報をデータベースに保存
+    const { error: dbError } = await supabase
+      .from('notes')
+      .insert({
+        title: title,
+        lecture_name: lecture,
+        storage_path: fileNameInStorage,
+        original_filename: file.name, // ここで元の日本語ファイル名を保存
+        uploader_id: user.id
+      });
+
+    if (dbError) {
+      alert('データベースへの保存に失敗しました: ' + dbError.message);
     } else {
       alert('ファイルが正常にアップロードされました！');
       setTitle('');
@@ -44,23 +54,10 @@ function NoteUploader() {
     <div>
       <h2>ノートをアップロード</h2>
       <form onSubmit={handleSubmit} className="quiz-form">
-        <div>
-          <label>タイトル:</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        </div>
-        <div>
-          <label>授業名:</label>
-          <input type="text" value={lecture} onChange={(e) => setLecture(e.target.value)} required />
-        </div>
-        <div>
-          <label>ファイル:</label>
-          <input type="file" onChange={(e) => setFile(e.target.files[0])} required />
-        </div>
-        <div className="form-actions">
-          <button type="submit" disabled={uploading}>
-            {uploading ? 'アップロード中...' : 'アップロード'}
-          </button>
-        </div>
+        <div><label>タイトル:</label><input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required /></div>
+        <div><label>授業名:</label><input type="text" value={lecture} onChange={(e) => setLecture(e.target.value)} required /></div>
+        <div><label>ファイル:</label><input type="file" onChange={(e) => setFile(e.target.files[0])} required /></div>
+        <div className="form-actions"><button type="submit" disabled={uploading}>{uploading ? 'アップロード中...' : 'アップロード'}</button></div>
       </form>
     </div>
   );
