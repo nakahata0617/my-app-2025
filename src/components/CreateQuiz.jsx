@@ -1,5 +1,3 @@
-// src/components/CreateQuiz.jsx
-
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import './CreateQuiz.css';

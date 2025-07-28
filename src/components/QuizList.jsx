@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Linkをインポート
+import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 function QuizList() {
@@ -27,7 +27,7 @@ function QuizList() {
       <ul>
         {quizzes.map(quiz => (
           <li key={quiz.id}>
-            <Link to={`/quiz/${quiz.id}`}>{quiz.title}</Link> {/* この行を変更 */}
+            <Link to={`/quiz/${quiz.id}`}>{quiz.title}</Link>
           </li>
         ))}
       </ul>
