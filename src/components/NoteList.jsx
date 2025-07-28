@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import './Card.css';
 
@@ -11,19 +12,12 @@ function NoteList() {
       // データベースのnotesテーブルから情報を取得
       const { data, error } = await supabase
         .from('notes')
-        .select('id, original_filename, storage_path');
+        .select('id, original_filename');
       
       if (error) {
         console.error('Error fetching notes:', error);
       } else {
-        // 各ファイルにダウンロード用の公開URLを追加
-        const notesWithUrls = data.map(note => {
-          const { data: { publicUrl } } = supabase.storage
-            .from('notes')
-            .getPublicUrl(note.storage_path);
-          return { ...note, publicUrl };
-        });
-        setNotes(notesWithUrls);
+        setNotes(data);
       }
       setLoading(false);
     }
@@ -40,9 +34,9 @@ function NoteList() {
       <ul className="card-list">
         {notes.map(note => (
           <li key={note.id} className="card">
-            <a href={note.publicUrl} target="_blank" rel="noopener noreferrer">
-              {note.original_filename} {/* 元の日本語ファイル名を表示 */}
-            </a>
+            <Link to={`/note/${note.id}`}>
+              {note.original_filename}
+            </Link>
           </li>
         ))}
       </ul>

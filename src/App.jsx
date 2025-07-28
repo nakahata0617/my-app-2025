@@ -1,3 +1,4 @@
+import NotePage from './components/NotePage.jsx';
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { supabase } from './supabaseClient';
@@ -54,6 +55,7 @@ function App() {
           <Route path="/upload" element={<ProtectedRoute session={session}><NoteUploader /></ProtectedRoute>} />
           <Route path="/quiz/:quizId" element={<QuizPage />} />
           <Route path="/notes" element={<NoteList />} />
+          <Route path="/note/:noteId" element={<NotePage />} /> {/* この行が重要です */}
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/ranking" element={<RankingPage />} />
         </Routes>

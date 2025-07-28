@@ -11,19 +11,27 @@ function NotePage() {
 
   useEffect(() => {
     async function fetchNoteAndComments() {
+      setLoading(true);
       // 1. ノートの情報を取得
-      const { data: noteData, error: noteError } = await supabase.from('notes').select('*').eq('id', noteId).single();
-      if (noteError) { console.error('Error fetching note:', noteError); }
-      else {
+      const { data: noteData } = await supabase.from('notes').select('*').eq('id', noteId).single();
+      if (noteData) {
         const { data: { publicUrl } } = supabase.storage.from('notes').getPublicUrl(noteData.storage_path);
         setNote({ ...noteData, publicUrl });
       }
 
-      // 2. コメントを取得
-      const { data: commentsData, error: commentsError } = await supabase.from('comments').select('*').eq('note_id', noteId);
-      if (commentsError) { console.error('Error fetching comments:', commentsError); }
-      else { setComments(commentsData); }
+      // 2. コメントと、関連するprofilesテーブルのusernameを取得
+      const { data: commentsData } = await supabase
+        .from('comments')
+        .select(`
+          id,
+          content,
+          created_at,
+          profiles ( username )
+        `)
+        .eq('note_id', noteId)
+        .order('created_at', { ascending: true });
       
+      if (commentsData) setComments(commentsData);
       setLoading(false);
     }
     fetchNoteAndComments();
@@ -32,13 +40,17 @@ function NotePage() {
   const handlePostComment = async (e) => {
     e.preventDefault();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { alert('コメントするにはログインが必要です。'); return; }
-    if (!newComment.trim()) return;
+    if (!user || !newComment.trim()) return;
 
     const { data: newCommentData, error } = await supabase
       .from('comments')
       .insert({ note_id: noteId, user_id: user.id, content: newComment })
-      .select()
+      .select(`
+        id,
+        content,
+        created_at,
+        profiles ( username )
+      `)
       .single();
 
     if (error) {
@@ -61,7 +73,10 @@ function NotePage() {
       <h3>コメント</h3>
       <ul>
         {comments.map(comment => (
-          <li key={comment.id}>{comment.content}</li>
+          <li key={comment.id}>
+            <strong>{comment.profiles?.username || '匿名ユーザー'}: </strong>
+            {comment.content}
+          </li>
         ))}
       </ul>
       <form onSubmit={handlePostComment} className="quiz-form">
