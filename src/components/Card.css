@@ -1,0 +1,22 @@
+.card-list {
+  list-style: none;
+  padding: 0;
+}
+
+.card {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.card:hover {
+  background-color: #e0e0e0;
+}
+
+.card a {
+  text-decoration: none;
+  color: #282c34;
+  font-weight: bold;
+}
